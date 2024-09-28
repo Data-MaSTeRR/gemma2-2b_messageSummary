@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  ollama-server:
+    image: ollama/ollama:latest  # Docker Hub에서 Ollama 이미지를 가져옴
+    ports:
+      - "11434:11434"
+    networks:
+      - ollama-net
+    mem_limit: 10g  # 필요에 따라 값을 늘려보세요.
+
+  fastapi-server:
+    build:
+      context: ./fastapi
+    ports:
+      - "8080:80"  # 로컬에서 8080 포트를 사용하여 FastAPI에 접근 가능
+    networks:
+      - ollama-net
+    environment:
+      OLLAMA_URL: "http://ollama-server:11434"
+
+networks:
+  ollama-net:
+    driver: bridge
+
